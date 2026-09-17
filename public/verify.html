@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Verify Email · MechRevision</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<div class="app-container">
+  <div class="main-panel">
+    <div class="header">
+      <div class="logo-area">
+        <div class="logo-icon"><i class="fas fa-cogs"></i></div>
+        <div class="logo-text">
+          <h1>MechRevision</h1>
+          <span>EMAIL VERIFICATION</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="verifyBox" class="auth-card" style="max-width:520px; margin:20px auto;">
+      <h2><i class="fas fa-envelope-circle-check"></i> Verifying…</h2>
+      <p id="verifyMsg" style="color:#4b6584; font-size:0.95rem; line-height:1.5;">
+        Please wait while we verify your email…
+      </p>
+      <div id="verifyActions" style="margin-top:16px; display:none;">
+        <a href="/" class="btn btn-primary" style="text-decoration:none;">
+          <i class="fas fa-arrow-right"></i> Go to homepage
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(async function () {
+  const params = new URLSearchParams(location.search);
+  const token = params.get('token');
+  const msg = document.getElementById('verifyMsg');
+  const actions = document.getElementById('verifyActions');
+  const box = document.getElementById('verifyBox');
+
+  if (!token) {
+    msg.innerHTML = '❌ No verification token provided.';
+    actions.style.display = 'block';
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/auth/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token })
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      msg.innerHTML = `❌ ${data.error || 'Verification failed.'}`;
+      actions.style.display = 'block';
+      return;
+    }
+
+    localStorage.setItem('mech_token', data.token);
+    localStorage.setItem('mech_user', JSON.stringify(data.user));
+
+    box.innerHTML = `
+      <h2 style="color:#0f6e3f;"><i class="fas fa-check-circle"></i> Email verified!</h2>
+      <p style="color:#4b6584;font-size:0.95rem;line-height:1.5;">
+        Your account is now active. Welcome aboard, ${data.user.name}!
+      </p>
+      <div style="margin-top:16px;">
+        <a href="/" class="btn btn-primary" style="text-decoration:none;">
+          <i class="fas fa-arrow-right"></i> Continue to MechRevision
+        </a>
+      </div>`;
+  } catch (e) {
+    msg.innerHTML = '❌ Network error. Please try again.';
+    actions.style.display = 'block';
+  }
+})();
+</script>
+</body>
+</html>
