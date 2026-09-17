@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MechRevision · Mechanical Engineering</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+<div class="app-container">
+  <div class="main-panel">
+
+    <div class="header">
+      <div class="logo-area">
+        <div class="logo-icon"><i class="fas fa-cogs"></i></div>
+        <div class="logo-text">
+          <h1>MechRevision</h1>
+          <span>MECHANICAL ENGINEERING UNITS</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="nav-btn" id="navDocs" style="display:none;">
+          <i class="fas fa-file-pdf"></i> Documents
+        </button>
+        <button class="nav-btn" id="navPayments" style="display:none;">
+          <i class="fas fa-receipt"></i> My payments
+        </button>
+        <div class="user-chip" id="userChip" style="display:none;">
+          <i class="fas fa-user-circle"></i> <span id="userName">User</span>
+          <button id="logoutBtn" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+        <div class="admin-badge" id="adminToggleBtn">
+          <i class="fas fa-user-shield"></i> Admin
+        </div>
+      </div>
+    </div>
+
+    <div class="auth-row" id="authRow">
+      <div class="auth-card">
+        <h2><i class="fas fa-sign-in-alt"></i> Log in</h2>
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="loginEmail" placeholder="Email address">
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="loginPassword" placeholder="Password">
+        </div>
+        <button class="btn btn-primary" id="loginBtn">
+          <i class="fas fa-arrow-right-to-bracket"></i> Log in
+        </button>
+        <div style="display:flex; justify-content:flex-end;">
+          <span class="forgot-link" id="forgotLink">Forgot password?</span>
+        </div>
+      </div>
+
+      <div class="auth-card">
+        <h2><i class="fas fa-user-plus"></i> Sign up</h2>
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="text" id="signupName" placeholder="Full name">
+        </div>
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="signupEmail" placeholder="Email address">
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="signupPassword" placeholder="Create password">
+        </div>
+        <button class="btn btn-outline" id="signupBtn">
+          <i class="fas fa-user-check"></i> Create account
+        </button>
+        <div style="font-size:0.72rem;color:#8fa8c9;margin-top:8px;">
+          We'll send a verification link to your email.
+        </div>
+      </div>
+    </div>
+
+    <div id="appSection" style="display:none;">
+
+      <div id="viewDocs">
+        <div class="year-tabs" id="yearTabs">
+          <button class="year-tab active" data-year="1">Year 1</button>
+          <button class="year-tab" data-year="2">Year 2</button>
+          <button class="year-tab" data-year="3">Year 3</button>
+          <button class="year-tab" data-year="4">Year 4</button>
+          <button class="year-tab" data-year="5">Year 5</button>
+        </div>
+
+        <div class="section-title">
+          <h3 id="yearTitle"><i class="fas fa-file-pdf"></i> Year 1 · Revision notes</h3>
+          <div class="payment-badge"><i class="fas fa-mobile-alt"></i> KES 10 per document</div>
+        </div>
+
+        <div class="doc-grid" id="docGrid"></div>
+
+        <div class="stk-alert">
+          <i class="fas fa-bell stk-icon"></i>
+          <span>Pay <strong>KES 10</strong> via M-Pesa to <strong>0742221173</strong> to unlock downloads. You can preview any document for free.</span>
+          <button id="payNowBtn"><i class="fas fa-credit-card"></i> Pay KES 10</button>
+        </div>
+      </div>
+
+      <div id="viewPayments" style="display:none;">
+        <div class="section-title">
+          <h3><i class="fas fa-receipt"></i> My payment history</h3>
+          <button class="btn btn-outline" id="refreshPaymentsBtn" style="width:auto; padding:10px 18px;">
+            <i class="fas fa-rotate"></i> Refresh
+          </button>
+        </div>
+        <div class="table-card">
+          <table id="paymentsTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Phone</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Receipt</th>
+              </tr>
+            </thead>
+            <tbody id="paymentsTbody"></tbody>
+          </table>
+          <div id="paymentsEmpty" class="empty-state" style="display:none;">
+            <i class="fas fa-inbox"></i>
+            You have no payments yet.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-overlay" id="viewerModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="viewerTitle"><i class="fas fa-file-pdf"></i> Preview</h3>
+      <div class="modal-actions">
+        <button class="btn-download" id="downloadBtn" disabled>
+          <i class="fas fa-download"></i> Download
+        </button>
+        <button class="modal-close" id="viewerClose"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <iframe id="pdfFrame" src=""></iframe>
+    </div>
+    <div class="modal-footer" id="viewerFooter">
+      <span id="viewerHint"><i class="fas fa-lock"></i> Pay KES 10 to enable download</span>
+    </div>
+  </div>
+</div>
+
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-header">
+    <h3><i class="fas fa-shield-halved"></i> Admin dashboard</h3>
+    <button class="admin-close" id="adminCloseBtn"><i class="fas fa-times"></i></button>
+  </div>
+
+  <div class="admin-tabs">
+    <button class="admin-tab active" data-tab="upload">
+      <i class="fas fa-cloud-upload-alt"></i> Upload
+    </button>
+    <button class="admin-tab" data-tab="dashboard">
+      <i class="fas fa-chart-line"></i> Dashboard
+    </button>
+    <button class="admin-tab" data-tab="payments">
+      <i class="fas fa-money-bill-wave"></i> Payments
+    </button>
+  </div>
+
+  <div class="admin-tab-content" id="tab-upload">
+    <div class="admin-form">
+      <label>Document title</label>
+      <input type="text" id="docTitle" placeholder="e.g. Thermodynamics Notes">
+
+      <div class="admin-row">
+        <div>
+          <label>Year</label>
+          <select id="docYear">
+            <option value="1">Year 1</option>
+            <option value="2">Year 2</option>
+            <option value="3">Year 3</option>
+            <option value="4">Year 4</option>
+            <option value="5">Year 5</option>
+          </select>
+        </div>
+        <div>
+          <label>Category</label>
+          <select id="docCategory">
+            <option>Thermodynamics</option>
+            <option>Fluid Mechanics</option>
+            <option>Machine Design</option>
+            <option>Materials Science</option>
+            <option>Mechanics</option>
+            <option>Manufacturing</option>
+            <option>Control Systems</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Description</label>
+      <textarea id="docDesc" placeholder="Short description"></textarea>
+
+      <label>PDF file</label>
+      <input type="file" id="docFile" accept="application/pdf">
+
+      <div class="admin-actions">
+        <button class="btn btn-primary" id="uploadDocBtn">
+          <i class="fas fa-cloud-upload-alt"></i> Upload
+        </button>
+      </div>
+
+      <div class="admin-list-title">Uploaded documents</div>
+      <div class="admin-doc-list" id="adminDocList"></div>
+    </div>
+  </div>
+
+  <div class="admin-tab-content" id="tab-dashboard" style="display:none;">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-users"></i></div>
+        <div class="stat-info"><span>Total users</span><strong id="statUsers">–</strong></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-user-check"></i></div>
+        <div class="stat-info"><span>Verified users</span><strong id="statVerified">–</strong></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="fas fa-file-pdf"></i></div>
+        <div class="stat-info"><span>Documents</span><strong id="statDocs">–</strong></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+        <div class="stat-info"><span>Pending payments</span><strong id="statPending">–</strong></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon red"><i class="fas fa-times-circle"></i></div>
+        <div class="stat-info"><span>Failed payments</span><strong id="statFailed">–</strong></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-info"><span>Completed</span><strong id="statCompleted">–</strong></div>
+      </div>
+      <div class="stat-card highlight">
+        <div class="stat-icon"><i class="fas fa-coins"></i></div>
+        <div class="stat-info"><span>Total revenue</span><strong id="statRevenue">–</strong></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="refreshStatsBtn" style="margin-top:14px;">
+      <i class="fas fa-rotate"></i> Refresh stats
+    </button>
+  </div>
+
+  <div class="admin-tab-content" id="tab-payments" style="display:none;">
+    <div class="section-title">
+      <h3 style="color:#eef4ff;"><i class="fas fa-list"></i> All payments</h3>
+      <button class="btn btn-outline" id="refreshPaymentsAdminBtn" style="width:auto; padding:8px 14px; border-color:#3a5480; color:#b8cae5;">
+        <i class="fas fa-rotate"></i>
+      </button>
+    </div>
+    <div class="admin-payments">
+      <table id="adminPaymentsTable">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Phone</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="adminPaymentsTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast-message" id="toast">
+  <i class="fas fa-info-circle"></i> <span id="toastText">Message</span>
+</div>
+
+<script src="app.js"></script>
+</body>
+  </html>
