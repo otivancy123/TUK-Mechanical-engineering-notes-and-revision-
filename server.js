@@ -20,7 +20,7 @@ app.use(bodyParser.json({ limit: '20mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ============ UPLOADS ============
-const DATA_DIR = process.env.RENDER ? '/var/data' : __dirname;
+const DATA_DIR = __dirname;
 const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
