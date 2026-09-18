@@ -21,6 +21,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ============ UPLOADS ============
 const DATA_DIR = __dirname;
+console.log('STARTUP: __dirname =', __dirname);
+console.log('STARTUP: public exists =', require('fs').existsSync(require('path').join(__dirname, 'public')));
+console.log('STARTUP: index.html exists =', require('fs').existsSync(require('path').join(__dirname, 'public', 'index.html')));
 const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
